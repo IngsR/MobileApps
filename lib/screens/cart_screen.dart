@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
 import '../theme/app_theme.dart';
 
 class CartScreen extends StatefulWidget {
@@ -9,33 +13,15 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final List<Map<String, dynamic>> _cartItems = [
-    {'name': 'Sepatu Sport Pro', 'price': 450000, 'qty': 1, 'emoji': '👟'},
-    {'name': 'Tas Kerja Elegan', 'price': 320000, 'qty': 2, 'emoji': '👜'},
-    {'name': 'Kemeja Kasual', 'price': 175000, 'qty': 1, 'emoji': '👔'},
-  ];
-
-  void _updateQty(int index, int delta) {
-    setState(() {
-      final newQty = _cartItems[index]['qty'] + delta;
-      if (newQty <= 0) {
-        _cartItems.removeAt(index);
-      } else {
-        _cartItems[index]['qty'] = newQty;
-      }
-    });
-  }
-
-  int get _totalPrice =>
-      _cartItems.fold(0, (sum, item) => sum + (item['price'] as int) * (item['qty'] as int));
-
   String _formatRupiah(int amount) {
     return 'Rp ${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Consumer<CartProvider>(
+      builder: (context, cart, child) {
+        return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
@@ -49,7 +35,7 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       Text('Keranjang', style: Theme.of(context).textTheme.titleLarge),
                       Text(
-                        '${_cartItems.length} item',
+                        '${cart.itemCount} item',
                         style: const TextStyle(
                           color: AppTheme.textGrey,
                           fontSize: 13,
@@ -64,7 +50,7 @@ class _CartScreenState extends State<CartScreen> {
 
             // Cart Items
             Expanded(
-              child: _cartItems.isEmpty
+              child: cart.itemCount == 0
                   ? const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -85,16 +71,17 @@ class _CartScreenState extends State<CartScreen> {
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: _cartItems.length,
+                      itemCount: cart.itemCount,
                       itemBuilder: (context, index) {
-                        final item = _cartItems[index];
-                        return _buildCartItem(item, index);
+                        final productId = cart.items.keys.toList()[index];
+                        final item = cart.items[productId]!;
+                        return _buildCartItem(item, productId, cart);
                       },
                     ),
             ),
 
             // Order Summary
-            if (_cartItems.isNotEmpty)
+            if (cart.itemCount > 0)
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -123,7 +110,7 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Text(
-                          _formatRupiah(_totalPrice),
+                          _formatRupiah(cart.totalAmount),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -138,11 +125,17 @@ class _CartScreenState extends State<CartScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          cart.clear();
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Pesanan berhasil dibuat! 🎉'),
+                            SnackBar(
+                              content: const Text('Pesanan berhasil dibuat! 🎉', textAlign: TextAlign.center),
                               backgroundColor: AppTheme.primary,
                               behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                              margin: const EdgeInsets.only(bottom: 20, left: 40, right: 40),
+                              duration: const Duration(seconds: 2),
+                              elevation: 0,
                             ),
                           );
                         },
@@ -170,10 +163,12 @@ class _CartScreenState extends State<CartScreen> {
           ],
         ),
       ),
+        );
+      },
     );
   }
 
-  Widget _buildCartItem(Map<String, dynamic> item, int index) {
+  Widget _buildCartItem(CartItem item, int productId, CartProvider cart) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -194,11 +189,18 @@ class _CartScreenState extends State<CartScreen> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.primary.withAlpha(15),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
-              child: Text(item['emoji'] as String, style: const TextStyle(fontSize: 30)),
+              child: CachedNetworkImage(
+                imageUrl: item.product.image,
+                fit: BoxFit.contain,
+                placeholder: (context, url) => const SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
           const SizedBox(width: 14),
@@ -207,17 +209,19 @@ class _CartScreenState extends State<CartScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item['name'] as String,
+                  item.product.title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                     color: AppTheme.textDark,
                     fontFamily: 'Poppins',
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _formatRupiah(item['price'] as int),
+                  _formatRupiah((item.product.price * 15000).toInt()),
                   style: const TextStyle(
                     color: AppTheme.primary,
                     fontWeight: FontWeight.bold,
@@ -231,11 +235,11 @@ class _CartScreenState extends State<CartScreen> {
           // Qty Controls
           Row(
             children: [
-              _qtyButton(Icons.remove, () => _updateQty(index, -1)),
+              _qtyButton(Icons.remove, () => cart.decreaseQuantity(productId)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  '${item['qty']}',
+                  '${item.quantity}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -244,7 +248,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ),
               ),
-              _qtyButton(Icons.add, () => _updateQty(index, 1)),
+              _qtyButton(Icons.add, () => cart.addItem(item.product)),
             ],
           ),
         ],

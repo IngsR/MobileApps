@@ -42,7 +42,7 @@ class AboutScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               const Text(
-                'Simple App',
+                'Kadai',
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -83,26 +83,26 @@ class AboutScreen extends StatelessWidget {
                 icon: Icons.info_outline_rounded,
                 title: 'Tentang Aplikasi',
                 content:
-                    'Simple App adalah aplikasi belanja online yang dirancang untuk memudahkan pengguna berbelanja produk berkualitas dengan harga terbaik langsung dari smartphone.',
+                    'Kadai merupakan sebuah platform aplikasi belanja online interaktif yang dikembangkan secara khusus untuk memberikan pengalaman berbelanja layaknya simulasi di dunia nyata. Aplikasi ini terhubung dengan berbagai API untuk menyediakan katalog produk secara langsung (live data), mendukung fitur pencarian secara seketika (real-time filtering), dan menyediakan ekosistem terintegrasi baik dari sisi pemilihan produk, penambahan ke dalam keranjang, hingga layanan komunikasi antarmuka (UI) kepada penjual. Proyek Kadai diciptakan tidak hanya sebagai alat bertransaksi, namun juga sebagai bukti nyata penerapan konsep clean architecture, state management mutakhir dengan Provider, serta animasi dinamis untuk memaksimalkan kenyamanan pengguna (User Experience).',
               ),
               const SizedBox(height: 14),
               _buildInfoCard(
                 icon: Icons.star_outline_rounded,
-                title: 'Fitur Unggulan',
+                title: 'Fitur Sistem Terintegrasi',
                 content:
-                    '✅ Katalog Produk Lengkap\n✅ Keranjang Belanja Pintar\n✅ Chat Langsung dengan Penjual\n✅ Notifikasi Real-time',
+                    '✅ Live Data API (Fakestore)\n✅ Global Search Engine Terintegrasi\n✅ Keranjang Belanja Pintar Berbasis Provider\n✅ Obrolan Edukasi (Chat) dengan Penjual/Bot\n✅ Notifikasi Floating Ringan (Non-obtrusive Snackbar)',
               ),
               const SizedBox(height: 14),
               _buildInfoCard(
                 icon: Icons.person_outline_rounded,
                 title: 'Developer',
-                content: '👨‍💻 Dikembangkan oleh Tim Simple App\n📧 dev@simpleapp.id\n🌐 www.simpleapp.id',
+                content: '👨‍💻 Dikembangkan oleh Tim Kadai\n📧 hello@kadai.id\n🌐 www.kadai.id',
               ),
               const SizedBox(height: 30),
 
               // Copyright
               Text(
-                '© 2026 Simple App. All rights reserved.',
+                '© 2026 Kadai Mobile. All rights reserved.',
                 style: const TextStyle(
                   fontSize: 12,
                   color: AppTheme.textGrey,

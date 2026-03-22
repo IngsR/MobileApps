@@ -25,28 +25,9 @@ class _MainNavigationState extends State<MainNavigation> {
     AboutScreen(),
   ];
 
-  final List<String> _titles = [
-    'Beranda',
-    'Pasar',
-    'Keranjang',
-    'Pesan',
-    'Tentang',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
-        actions: [
-          if (_currentIndex == 0)
-            IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              onPressed: () {},
-            ),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: _screens[_currentIndex],
       floatingActionButton: _buildCenterFAB(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

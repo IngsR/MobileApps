@@ -1,53 +1,70 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'chat_screen.dart';
 
-class MessagesScreen extends StatelessWidget {
+class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
 
   @override
+  State<MessagesScreen> createState() => _MessagesScreenState();
+}
+
+class _MessagesScreenState extends State<MessagesScreen> {
+  String _searchQuery = '';
+
+  final List<Map<String, dynamic>> _allMessages = [
+    {
+      'name': 'Toko Fashion ID',
+      'avatar': '🛍️',
+      'last': 'Pesanan Anda sudah dikirim!',
+      'time': '10:30',
+      'unread': 2,
+      'online': true,
+    },
+    {
+      'name': 'Andi (Penjual)',
+      'avatar': '👨',
+      'last': 'Baik, nanti saya konfirmasi ya.',
+      'time': '09:15',
+      'unread': 0,
+      'online': true,
+    },
+    {
+      'name': 'CS Kadai',
+      'avatar': '🤖',
+      'last': 'Terima kasih sudah menghubungi kami!',
+      'time': 'Kemarin',
+      'unread': 0,
+      'online': false,
+    },
+    {
+      'name': 'Pusat Bantuan',
+      'avatar': '🎧',
+      'last': 'Laporan Anda sedang diproses.',
+      'time': 'Sen',
+      'unread': 1,
+      'online': false,
+    },
+    {
+      'name': 'Promo & Diskon',
+      'avatar': '🎁',
+      'last': 'Flash sale hari ini! Diskon hingga 70%!',
+      'time': 'Min',
+      'unread': 0,
+      'online': false,
+    },
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    final messages = [
-      {
-        'name': 'Toko Fashion ID',
-        'avatar': '🛍️',
-        'last': 'Pesanan Anda sudah dikirim!',
-        'time': '10:30',
-        'unread': 2,
-        'online': true,
-      },
-      {
-        'name': 'Andi (Penjual)',
-        'avatar': '👨',
-        'last': 'Baik, nanti saya konfirmasi ya.',
-        'time': '09:15',
-        'unread': 0,
-        'online': true,
-      },
-      {
-        'name': 'CS Simple App',
-        'avatar': '🤖',
-        'last': 'Terima kasih sudah menghubungi kami!',
-        'time': 'Kemarin',
-        'unread': 0,
-        'online': false,
-      },
-      {
-        'name': 'Pusat Bantuan',
-        'avatar': '🎧',
-        'last': 'Laporan Anda sedang diproses.',
-        'time': 'Sen',
-        'unread': 1,
-        'online': false,
-      },
-      {
-        'name': 'Promo & Diskon',
-        'avatar': '🎁',
-        'last': 'Flash sale hari ini! Diskon hingga 70%!',
-        'time': 'Min',
-        'unread': 0,
-        'online': false,
-      },
-    ];
+    var filteredMessages = _allMessages;
+    if (_searchQuery.isNotEmpty) {
+      filteredMessages = _allMessages
+          .where((m) => (m['name'] as String)
+              .toLowerCase()
+              .contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -64,9 +81,9 @@ class MessagesScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Pesan', style: Theme.of(context).textTheme.titleLarge),
-                      const Text(
-                        '5 percakapan',
-                        style: TextStyle(
+                      Text(
+                        '${filteredMessages.length} percakapan',
+                        style: const TextStyle(
                           color: AppTheme.textGrey,
                           fontSize: 13,
                           fontFamily: 'Poppins',
@@ -98,13 +115,18 @@ class MessagesScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.search_rounded, color: AppTheme.textGrey),
-                    SizedBox(width: 10),
+                    const Icon(Icons.search_rounded, color: AppTheme.textGrey),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        onChanged: (value) {
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
+                        decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Cari percakapan...',
                           hintStyle: TextStyle(
@@ -122,13 +144,15 @@ class MessagesScreen extends StatelessWidget {
 
             // Message List
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  return _buildMessageTile(messages[index]);
-                },
-              ),
+              child: filteredMessages.isEmpty
+                  ? const Center(child: Text('Percakapan tidak ditemukan.'))
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: filteredMessages.length,
+                      itemBuilder: (context, index) {
+                        return _buildMessageTile(filteredMessages[index]);
+                      },
+                    ),
             ),
           ],
         ),
@@ -140,7 +164,16 @@ class MessagesScreen extends StatelessWidget {
     final hasUnread = (msg['unread'] as int) > 0;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              title: msg['name'] as String,
+            ),
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
