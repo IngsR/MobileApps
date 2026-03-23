@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../services/api_service.dart';
@@ -8,6 +9,7 @@ class ProductProvider with ChangeNotifier {
   String _error = '';
   
   String _searchQuery = '';
+  Timer? _debounce;
   
   // Category variables
   final List<String> _categories = ['Semua', 'Pakaian', 'Sepatu', 'Aksesoris'];
@@ -17,7 +19,11 @@ class ProductProvider with ChangeNotifier {
     List<Product> filtered = _items;
 
     if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((p) => p.title.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+      final queryWords = _searchQuery.toLowerCase().split(RegExp(r'\s+'));
+      filtered = filtered.where((p) {
+        final searchString = '${p.title} ${p.description}'.toLowerCase();
+        return queryWords.every((word) => searchString.contains(word));
+      }).toList();
     }
 
     if (_selectedCategoryIndex > 0) {
@@ -53,8 +59,17 @@ class ProductProvider with ChangeNotifier {
   }
 
   void search(String query) {
-    _searchQuery = query;
-    notifyListeners();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      _searchQuery = query.trim();
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   void setCategory(int index) {
