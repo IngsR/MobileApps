@@ -74,40 +74,6 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          // BURGER MENU / POPUP MENU
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 28),
-            onSelected: (value) {
-              if (value == 'profil') {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Menu Profil ditekan')));
-              } else if (value == 'pengaturan') {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Menu Pengaturan ditekan')));
-              } else if (value == 'bantuan') {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pusat Bantuan dll')));
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'profil',
-                child: Row(
-                  children: [Icon(Icons.person_rounded, color: AppTheme.textGrey, size: 20), SizedBox(width: 10), Text('Profil')],
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'pengaturan',
-                child: Row(
-                  children: [Icon(Icons.settings_rounded, color: AppTheme.textGrey, size: 20), SizedBox(width: 10), Text('Pengaturan')],
-                ),
-              ),
-              const PopupMenuDivider(),
-              const PopupMenuItem<String>(
-                value: 'bantuan',
-                child: Row(
-                  children: [Icon(Icons.help_outline_rounded, color: AppTheme.textGrey, size: 20), SizedBox(width: 10), Text('Bantuan & Dukungan')],
-                ),
-              ),
-            ],
-          ),
           const SizedBox(width: 8),
           CircleAvatar(
             radius: 20,

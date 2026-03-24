@@ -3,6 +3,7 @@ import '../widgets/organisms/home_header.dart';
 import '../widgets/organisms/home_stats_row.dart';
 import '../widgets/organisms/featured_products_section.dart';
 import '../widgets/organisms/recent_activity_section.dart';
+import '../widgets/universal_app_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -10,9 +11,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+      appBar: const UniversalAppBar(title: 'Kadai'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -41,7 +42,6 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 12),
               const RecentActivitySection(),
             ],
-          ),
         ),
       ),
     );

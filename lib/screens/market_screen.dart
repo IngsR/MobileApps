@@ -5,6 +5,7 @@ import '../models/product.dart';
 import '../providers/product_provider.dart';
 import '../theme/app_theme.dart';
 import 'product_detail_screen.dart';
+import '../widgets/universal_app_bar.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -18,19 +19,18 @@ class _MarketScreenState extends State<MarketScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Consumer<ProductProvider>(
-              builder: (context, provider, child) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Pasar', style: Theme.of(context).textTheme.titleLarge),
+      appBar: const UniversalAppBar(title: 'Pasar'),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Consumer<ProductProvider>(
+            builder: (context, provider, child) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       const SizedBox(height: 4),
                       Text(
                         '${provider.items.length} produk tersedia',
@@ -165,7 +165,6 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 

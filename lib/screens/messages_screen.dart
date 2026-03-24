@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'chat_screen.dart';
+import '../widgets/universal_app_bar.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -67,20 +68,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
     }
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
+      appBar: const UniversalAppBar(title: 'Pesan'),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+            // Info
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Pesan', style: Theme.of(context).textTheme.titleLarge),
                       Text(
                         '${filteredMessages.length} percakapan',
                         style: const TextStyle(
@@ -156,7 +156,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 

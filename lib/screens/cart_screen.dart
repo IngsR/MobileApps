@@ -5,6 +5,8 @@ import '../providers/cart_provider.dart';
 import '../models/cart_item.dart';
 import '../theme/app_theme.dart';
 
+import '../widgets/universal_app_bar.dart';
+
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -22,19 +24,18 @@ class _CartScreenState extends State<CartScreen> {
     return Consumer<CartProvider>(
       builder: (context, cart, child) {
         return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              child: Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Keranjang', style: Theme.of(context).textTheme.titleLarge),
-                      Text(
+          appBar: const UniversalAppBar(title: 'Keranjang'),
+          body: Column(
+            children: [
+              // Info
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 16),
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                         '${cart.itemCount} item',
                         style: const TextStyle(
                           color: AppTheme.textGrey,
@@ -160,9 +161,8 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
               ),
-          ],
-        ),
-      ),
+            ],
+          ),
         );
       },
     );

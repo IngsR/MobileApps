@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
+import '../widgets/universal_app_bar.dart';
+
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+      appBar: const UniversalAppBar(title: 'Tentang'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               const SizedBox(height: 20),
@@ -114,7 +116,6 @@ class AboutScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 
