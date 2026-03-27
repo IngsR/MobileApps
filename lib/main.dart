@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'theme/app_theme.dart';
-import 'widgets/main_navigation.dart';
-import 'providers/product_provider.dart';
-import 'providers/cart_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/theme/app_theme.dart';
+import 'presentation/widgets/main_navigation.dart';
+import 'core/di/injection.dart' as di;
+import 'presentation/cubits/settings_cubit.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize dependency injection
+  await di.init();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -20,16 +24,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
+        // Register SettingsCubit using DI
+        BlocProvider<SettingsCubit>(
+          create: (_) => di.sl<SettingsCubit>(),
+        ),
       ],
-      child: MaterialApp(
-        title: 'Simple App',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        home: const MainNavigation(),
+      child: BlocBuilder<SettingsCubit, SettingsState>(
+        builder: (context, settingsState) {
+          return MaterialApp(
+            title: 'Simple App',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settingsState.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: const MainNavigation(),
+          );
+        },
       ),
     );
   }
